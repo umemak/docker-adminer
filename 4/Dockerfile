@@ -1,10 +1,14 @@
 FROM php:7.4-bullseye
 
-RUN apt update -y && apt install wget unzip libaio1 -y
-RUN wget https://download.oracle.com/otn_software/linux/instantclient/217000/instantclient-basic-linux.x64-21.7.0.0.0dbru.zip
-RUN wget https://download.oracle.com/otn_software/linux/instantclient/217000/instantclient-sdk-linux.x64-21.7.0.0.0dbru.zip
-RUN unzip instantclient-basic-linux.x64-21.7.0.0.0dbru.zip
-RUN unzip instantclient-sdk-linux.x64-21.7.0.0.0dbru.zip
+RUN apt update -y \
+&&  apt install wget unzip libaio1 -y \
+&&  wget https://download.oracle.com/otn_software/linux/instantclient/217000/instantclient-basic-linux.x64-21.7.0.0.0dbru.zip \
+&&  wget https://download.oracle.com/otn_software/linux/instantclient/217000/instantclient-sdk-linux.x64-21.7.0.0.0dbru.zip \
+&&  unzip instantclient-basic-linux.x64-21.7.0.0.0dbru.zip \
+&&  unzip instantclient-sdk-linux.x64-21.7.0.0.0dbru.zip \
+&&  rm instantclient-basic-linux.x64-21.7.0.0.0dbru.zip \
+&&  rm instantclient-sdk-linux.x64-21.7.0.0.0dbru.zip
+
 ENV ORACLE_HOME /instantclient_21_7
 ENV LD_LIBRARY_PATH /instantclient_21_7
 
@@ -30,12 +34,12 @@ RUN	set -x \
 	libsqlite3-dev \
 	unixodbc-dev \
 	freetds-dev \
-    pax-utils
-RUN	docker-php-ext-configure pdo_odbc --with-pdo-odbc=unixODBC,/usr
-RUN	docker-php-ext-configure oci8 --with-oci8=instantclient,/instantclient_21_7
-RUN	docker-php-ext-configure pdo_oci --with-pdo_oci=instantclient,/instantclient_21_7
-RUN ln -s /usr/lib/x86_64-linux-gnu/libsybdb.a /usr/lib
-RUN docker-php-ext-install \
+    pax-utils \
+&&  docker-php-ext-configure pdo_odbc --with-pdo-odbc=unixODBC,/usr \
+&&  docker-php-ext-configure oci8 --with-oci8=instantclient,/instantclient_21_7 \
+&&  docker-php-ext-configure pdo_oci --with-pdo_oci=instantclient,/instantclient_21_7 \
+&&  ln -s /usr/lib/x86_64-linux-gnu/libsybdb.a /usr/lib \
+&&  docker-php-ext-install \
 	mysqli \
 	pdo_pgsql \
 	pdo_sqlite \
@@ -44,7 +48,7 @@ RUN docker-php-ext-install \
     pdo_oci \
     oci8
 
-COPY	*.php /var/www/html/
+COPY *.php /var/www/html/
 
 ENV	ADMINER_VERSION 4.8.1
 ENV	ADMINER_DOWNLOAD_SHA256 2fd7e6d8f987b243ab1839249551f62adce19704c47d3d0c8dd9e57ea5b9c6b3
